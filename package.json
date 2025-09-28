@@ -17,7 +17,26 @@
         "command": "shabix.helloWorld",
         "title": "Hello World"
       }
-    ]
+    ],
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "agent-webview-activitybar",
+          "title": "mini-coding-agent",
+          "icon": "assets/agent.svg"
+        }
+      ]
+    },
+    "views": {
+      "roo-cline-activitybar": [
+        {
+          "id": "agent-webview-activitybar",
+          "name": "mini-coding-agent",
+          "type": "webview",
+          "icon": "assets/agent.svg"
+        }
+      ]
+    }
   },
   "scripts": {
     "vscode:prepublish": "pnpm run package",

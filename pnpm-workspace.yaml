@@ -1,2 +1,7 @@
+
+packages:
+  - agent-webview
+
+
 ignoredBuiltDependencies:
   - esbuild

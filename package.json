@@ -14,26 +14,25 @@
   "contributes": {
     "commands": [
       {
-        "command": "shabix.helloWorld",
+        "command": "coding-agent.helloWorld",
         "title": "Hello World"
       }
     ],
     "viewsContainers": {
       "activitybar": [
         {
-          "id": "agent-webview-activitybar",
+          "id": "mini-coding-agent-activitybar",
           "title": "mini-coding-agent",
-          "icon": "assets/agent.svg"
+          "icon": "assets/icon.svg"
         }
       ]
     },
     "views": {
-      "roo-cline-activitybar": [
+      "mini-coding-agent-activitybar": [
         {
-          "id": "agent-webview-activitybar",
-          "name": "mini-coding-agent",
           "type": "webview",
-          "icon": "assets/agent.svg"
+          "id": "mini-coding-agent-view.SidebarProvider",
+          "name": "mini-coding-agent"
         }
       ]
     }

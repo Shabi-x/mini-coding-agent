@@ -1,6 +1,6 @@
-# shabix README
+# mini-coding-agent README
 
-This is the README for your extension "shabix". After writing up a brief description, we recommend including the following sections.
+This is the README for your extension "mini-coding-agent". After writing up a brief description, we recommend including the following sections.
 
 ## Features
 

@@ -1,71 +1,164 @@
-# mini-coding-agent README
+# Mini Coding Agent
 
-This is the README for your extension "mini-coding-agent". After writing up a brief description, we recommend including the following sections.
+基于 yo code 开发的 VS Code 插件探索项目，致力于实现一个简单架构的 Coding Agent 插件。
 
-## Features
+## 项目概述
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+本项目是一个探索性的 VSCode Extension，旨在构建一个基础的 Coding Agent VSCode插件的最小实现架构。通过使用 VS Code 的 Webview 技术，结合 React 前端框架，实现一个可以在 VSCode 环境下运行的交互式 Vibe Coding 助手。
 
-For example if there is an image subfolder under your extension project workspace:
+## 技术栈
 
-\!\[feature X\]\(images/feature-x.png\)
+- **后端**: TypeScript + VS Code API
+- **前端**: React 实现 Webview
+- **构建工具**: esbuild
+- **包管理**: pnpm + Monorepo
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## 项目结构
 
-## Requirements
+```
+mini-coding-agent/
+├── src/                          # VS Code 扩展源代码
+│   ├── extension.ts              # 扩展入口文件
+│   ├── agentWebviewProvider.ts  # Webview 提供者
+│   └── test/                     # 测试文件
+├── agent-webview/                # React 前端应用
+│   ├── src/                      # 前端源代码
+│   │   ├── App.tsx              # 主应用组件
+│   │   ├── vscode-api.ts        # VS Code API 模拟实现
+│   │   └── ...                  # 其他 React 组件和资源
+│   ├── package.json             # 前端依赖配置
+│   └── vite.config.ts           # Vite 配置
+├── package.json                 # 扩展依赖配置
+├── tsconfig.json                # TypeScript 配置
+└── esbuild.js                   # 构建脚本
+```
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+## 当前进度
 
-## Extension Settings
+### ✅ 已完成功能
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+1. **基础架构搭建**
+   - 使用 yo code 生成 VS Code 扩展基础结构
+   - 配置 TypeScript 和 ESLint 开发环境
+   - 设置 pnpm 工作区管理依赖
 
-For example:
+2. **VS Code 扩展核心功能**
+   - 实现扩展激活和停用机制
+   - 注册 Webview 视图提供者
+   - 创建侧边栏视图容器
+   - 实现命令注册和消息传递
 
-This extension contributes the following settings:
+3. **VSCode Extension Webview 页面搭建**
+   - 使用 React + TypeScript + Vite 创建前端应用
+   - 实现与 VS Code 扩展的双向通信
+   - 添加 VS Code API 类型支持和模拟实现
+   - 解决 Webview 安全策略和资源访问问题
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+4. **消息传递机制**
+   - 基础消息发送和接收已实现
+   - 需要扩展更复杂的消息类型和处理逻辑
 
-## Known Issues
+### 📋 TODO List
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+1. **提供接入API接口**
+   - 集成 OpenAI、Claude Code及其他服务
 
-## Release Notes
+2. **抓取Agent内置提示词**
+   - System Prompts
+   - 将tools编写为func_call
+   - attempt_completion
+   - read_file
 
-Users appreciate release notes as you update your extension.
+3. **Coding Agent Loop**
+   - Agent_loop
+   - Tool_use
+   - Text_context
+  
+4. **测试和文档**
+   - 完善单元测试
+   - 添加集成测试
+   - 完善用户文档
 
-### 1.0.0
+## 开发指南
 
-Initial release of ...
+### 环境要求
 
-### 1.0.1
+- Node.js 18+
+- VS Code 最新版本
+- pnpm 包管理器
 
-Fixed issue #.
+### 安装步骤
 
-### 1.1.0
+1. 克隆项目
 
-Added features X, Y, and Z.
+   ```bash
+   git clone <repository-url>
+   cd mini-coding-agent
+   ```
 
----
+2. 安装依赖
 
-## Following extension guidelines
+   ```bash
+   pnpm install
+   ```
 
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
+3. 构建前端应用
 
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
+   ```bash
+   cd agent-webview
+   pnpm install
+   pnpm build
+   ```
 
-## Working with Markdown
+4. 在 VS Code 中调试扩展
+   - 打开项目文件夹
+   - 按 F5 启动调试
+   - 在新窗口中测试扩展功能
 
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
+### 开发流程
 
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
+1. **插件WebView开发**
 
-## For more information
+   ```bash
+   cd agent-webview
+   pnpm dev  # 启动前端开发服务器
+   ```
 
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
+2. **插件服务开发**
+   - 在 VS Code 中打开项目
+   - 按 F5 启动扩展调试
+   - 修改 `src/` 目录下的代码
 
-**Enjoy!**
+3. **构建和测试**
+
+   ```bash
+   pnpm compile      # 编译扩展
+   pnpm package      # 打包扩展
+   pnpm test         # 运行测试
+   ```
+
+## 技术难点和解决方案
+
+### 1. Webview 安全策略
+
+**问题**: VS Code Webview 默认不允许访问本地资源和执行脚本。
+
+**解决方案**:
+
+- 通过 `asWebviewUri` 转换本地资源 URI
+- 设置 `enableScripts: true` 允许脚本执行
+- 配置 `localResourceRoots` 限制资源访问范围
+
+### 2. 前后端通信
+
+**问题**: Webview 和 Vscode 扩展之间的消息传递需要可靠的机制。
+
+**解决方案**:
+
+- 使用 `postMessage` 和 `onDidReceiveMessage` 实现双向通信
+- 定义清晰的消息格式和处理逻辑
+- 添加错误处理和日志记录
+
+## 许可证
+
+MIT License

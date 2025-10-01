@@ -5,3 +5,4 @@ node_modules
 *.vsix
 roo-code
 .env
+.DS_Store

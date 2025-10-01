@@ -16,7 +16,16 @@ export function activate(context: vscode.ExtensionContext) {
       provider
     )	
   );
-
+  context.subscriptions.push(
+    vscode.commands.registerCommand(
+      "coding-agent.helloWorld",
+      () => {
+        provider.postMessage(
+          "helloWorld"
+        );
+      }
+    )
+  );
 }
 
 // This method is called when your extension is deactivated

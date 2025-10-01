@@ -1,6 +1,7 @@
 import * as vscode from "vscode";
 
 export class AgentWebviewProvider implements vscode.WebviewViewProvider {
+  private webview?: vscode.Webview | undefined;
   constructor(private context: vscode.ExtensionContext) {}
   resolveWebviewView(
     webviewView: vscode.WebviewView,
@@ -11,21 +12,25 @@ export class AgentWebviewProvider implements vscode.WebviewViewProvider {
     // 1. webview 默认不能直接访问本地文件系统，需要通过 asWebviewUri 转换为安全 URI
     // 2. 使用 Uri.joinPath 确保跨平台路径兼容性，避免硬编码路径分隔符
     // 3. 通过这种方式，webview 可以安全地加载扩展包内的资源文件
-    const ScriptUri = webviewView.webview.asWebviewUri(vscode.Uri.joinPath(
-      this.context.extensionUri,
-      "agent-webview",
-      "dist",
-      "assets",
-      "index.js"
-    ));
-    const StyleUri = webviewView.webview.asWebviewUri(vscode.Uri.joinPath(
-      this.context.extensionUri,
-      "agent-webview",
-      "dist",
-      "assets",
-      "index.css"
-    ));
-    
+    const ScriptUri = webviewView.webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this.context.extensionUri,
+        "agent-webview",
+        "dist",
+        "assets",
+        "index.js"
+      )
+    );
+    const StyleUri = webviewView.webview.asWebviewUri(
+      vscode.Uri.joinPath(
+        this.context.extensionUri,
+        "agent-webview",
+        "dist",
+        "assets",
+        "index.css"
+      )
+    );
+
     // 解决了 webview 内容安全策略（CSP）限制：
     // 1. enableScripts: true - 允许 webview 中执行 JavaScript，默认是禁用的
     // 2. localResourceRoots: [this.context.extensionUri] - 明确指定 webview 可以访问的本地资源范围
@@ -34,8 +39,7 @@ export class AgentWebviewProvider implements vscode.WebviewViewProvider {
       enableScripts: true,
       localResourceRoots: [this.context.extensionUri],
     };
-    webviewView.webview.html = 
-    `<!doctype html>
+    webviewView.webview.html = `<!doctype html>
       <html lang="en">
         <head>
           <meta charset="UTF-8" />
@@ -47,7 +51,10 @@ export class AgentWebviewProvider implements vscode.WebviewViewProvider {
         <body>
           <div id="root"></div>
         </body>
-      </html>`
-      ;
+      </html>`;
+  }
+
+  postMessage(message: string) {
+    this.webview?.postMessage(message);
   }
 }

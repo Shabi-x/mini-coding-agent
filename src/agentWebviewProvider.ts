@@ -52,6 +52,11 @@ export class AgentWebviewProvider implements vscode.WebviewViewProvider {
           <div id="root"></div>
         </body>
       </html>`;
+
+      // 实现后端监听前端发送的消息
+      webviewView.webview.onDidReceiveMessage((e: string) => {
+        vscode.window.showInformationMessage(e);
+      });
   }
 
   postMessage(message: string) {

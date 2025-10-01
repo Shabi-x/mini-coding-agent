@@ -12,7 +12,7 @@ export function activate(context: vscode.ExtensionContext) {
   const provider = new AgentWebviewProvider();
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
-      "mini-coding-agent-view",
+      "mini-coding-agent-activitybar.SidebarProvider",
       provider
     )	
   );

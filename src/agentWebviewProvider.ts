@@ -67,7 +67,7 @@ export class AgentWebviewProvider implements vscode.WebviewViewProvider {
     webviewView.webview.onDidReceiveMessage((message: string) => {
       // 将webview发送的message展示在vscode右下角弹窗
       vscode.window.showInformationMessage(message);
-      this.currentTask = new Task(this.apiConfiguration,message);
+      this.currentTask = new Task(this, this.apiConfiguration, message);
       this.currentTask.start();
     });
   }

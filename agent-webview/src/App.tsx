@@ -1,15 +1,20 @@
 import { useState } from 'react'
 import './App.css'
+import { useEvent } from 'react-use'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [message, setMessage] = useState("")
+  useEvent("message", (e: MessageEvent<string>) => {
+    setMessage(e.data)
+    console.log(e.data)
+  })
 
   return (
     <>
-      <h1>Vite + React</h1>
+      <h1>{message}</h1>
       <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
+        <button onClick={() => setMessage("helloWorld")}>
+          Send Message
         </button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR

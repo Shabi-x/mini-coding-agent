@@ -44,6 +44,9 @@ importers:
 
   agent-webview:
     dependencies:
+      '@types/vscode-webview':
+        specifier: ^1.57.5
+        version: 1.57.5
       react:
         specifier: ^19.1.1
         version: 19.1.1
@@ -591,6 +594,9 @@ packages:
 
   '@types/react@19.1.14':
     resolution: {integrity: sha512-ukd93VGzaNPMAUPy0gRDSC57UuQbnH9Kussp7HBjM06YFi9uZTFhOvMSO2OKqXm1rSgzOE+pVx1k1PYHGwlc8Q==}
+
+  '@types/vscode-webview@1.57.5':
+    resolution: {integrity: sha512-iBAUYNYkz+uk1kdsq05fEcoh8gJmwT3lqqFPN7MGyjQ3HVloViMdo7ZJ8DFIP8WOK74PjOEilosqAyxV2iUFUw==}
 
   '@types/vscode@1.104.0':
     resolution: {integrity: sha512-0KwoU2rZ2ecsTGFxo4K1+f+AErRsYW0fsp6A0zufzGuhyczc2IoKqYqcwXidKXmy2u8YB2GsYsOtiI9Izx3Tig==}
@@ -2589,6 +2595,8 @@ snapshots:
   '@types/react@19.1.14':
     dependencies:
       csstype: 3.1.3
+
+  '@types/vscode-webview@1.57.5': {}
 
   '@types/vscode@1.104.0': {}
 

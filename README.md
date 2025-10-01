@@ -62,6 +62,9 @@ mini-coding-agent/
 
 1. **提供接入API接口**
    - 集成 OpenAI、Claude Code及其他服务
+   - 用户提问，流式请求
+   - 接收流式响应，实时展示
+   - markdown 渲染
 
 2. **抓取Agent内置提示词**
    - System Prompts

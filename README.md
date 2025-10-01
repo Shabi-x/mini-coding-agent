@@ -1,6 +1,7 @@
 # Mini Coding Agent
 
-基于 yo code 开发的 VS Code 插件探索项目，致力于实现一个简单架构的 Coding Agent 插件。
+基于 yo code 探索开发的 VSCode Vibe Coding 插件，致力于实现一个简单架构的 Coding Agent 插件；
+类似于 CodeBuddy 插件版、GitHub Copilot、 Amazon CodeWhisperer等AI Coding助手。
 
 ## 项目概述
 
@@ -17,20 +18,22 @@
 
 ```
 mini-coding-agent/
-├── src/                          # VS Code 扩展源代码
-│   ├── extension.ts              # 扩展入口文件
-│   ├── agentWebviewProvider.ts  # Webview 提供者
-│   └── test/                     # 测试文件
-├── agent-webview/                # React 前端应用
+├── src/                          # VS Code Extension
+│   ├── extension.ts              # VSCode Extension 入口文件
+│   ├── agentWebviewProvider.ts  # Webview数据交互处理Provider
+│   ├── APIHandler.ts            # API 请求处理，链接大模型接口
+│   ├── task.ts                  # 任务处理逻辑，处理流式请求和响应
+├── agent-webview/                # React WebView
 │   ├── src/                      # 前端源代码
-│   │   ├── App.tsx              # 主应用组件
-│   │   ├── vscode-api.ts        # VS Code API 模拟实现
-│   │   └── ...                  # 其他 React 组件和资源
 │   ├── package.json             # 前端依赖配置
-│   └── vite.config.ts           # Vite 配置
+├── .env                         # 环境变量配置
+├── .gitignore                   # Git 忽略文件
+├── assets/                      # 扩展资源
 ├── package.json                 # 扩展依赖配置
 ├── tsconfig.json                # TypeScript 配置
-└── esbuild.js                   # 构建脚本
+├── esbuild.js                   # 构建脚本
+├── pnpm-workspace.yaml          # pnpm 工作区配置
+└── pnpm-lock.yaml               # 依赖锁定文件
 ```
 
 ## 当前进度
@@ -56,15 +59,21 @@ mini-coding-agent/
 
 4. **消息传递机制**
    - 基础消息发送和接收已实现
-   - 需要扩展更复杂的消息类型和处理逻辑
+   - 实现流式响应的实时展示
+   - 修复前后端通信问题，确保消息正确传递和显示
+
+5. **API 接入**
+   - 集成 OpenAI API（通过阿里云 Dashscope 兼容接口）
+   - 实现环境变量配置管理（API 密钥、基础 URL 和模型）
+   - 实现流式请求和响应处理
+   - 添加前端展示流式返回结果
 
 ### 📋 TODO List
 
-1. **提供接入API接口**
-   - 集成 OpenAI、Claude Code及其他服务
-   - 用户提问，流式请求
-   - 接收流式响应，实时展示
-   - markdown 渲染
+1. **完善 API 接口**
+   - 支持多种 AI 服务（Claude Code 等），支持用户自行配置API Key
+   - 实现 markdown 渲染
+   - 添加请求重试和错误恢复机制
 
 2. **抓取Agent内置提示词**
    - System Prompts
@@ -76,7 +85,7 @@ mini-coding-agent/
    - Agent_loop
    - Tool_use
    - Text_context
-  
+
 4. **测试和文档**
    - 完善单元测试
    - 添加集成测试

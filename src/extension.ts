@@ -9,7 +9,7 @@ export function activate(context: vscode.ExtensionContext) {
   console.log('mini-coding-agent 扩展已激活');
 
   // 注册 webview 视图提供者
-  const provider = new AgentWebviewProvider();
+  const provider = new AgentWebviewProvider(context);
   context.subscriptions.push(
     vscode.window.registerWebviewViewProvider(
       "mini-coding-agent-view.SidebarProvider",

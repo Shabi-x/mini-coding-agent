@@ -1,16 +1,18 @@
 import * as vscode from "vscode";
 import { Task } from "./task";
 import { ApiConfiguration } from "./APIHandler";
+import * as dotenv from "dotenv";
 
-
+// 加载环境变量
+dotenv.config();
 
 export class AgentWebviewProvider implements vscode.WebviewViewProvider {
   private webview?: vscode.Webview | undefined;
   private currentTask: Task | undefined = undefined;
   private apiConfiguration: ApiConfiguration = {
-    model: "gpt-4.1",
-    apiKey: "",
-    BaseUrl: "",
+    model: process.env.MODEL || "qwen-plus",
+    apiKey: process.env.API_KEY || "",
+    BaseUrl: process.env.BASE_URL || "https://dashscope.aliyuncs.com/compatible-mode/v1",
   };
   constructor(private context: vscode.ExtensionContext) {}
   resolveWebviewView(

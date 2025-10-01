@@ -23,6 +23,7 @@ export class Task {
     const stream = apiHandler.createMessage(systemPrompt, messages);
     for await (const chunk of stream) {
       console.log(chunk);
+      this.provider.postMessage(chunk);
     }
   }
 }

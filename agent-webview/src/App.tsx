@@ -7,7 +7,7 @@ function App() {
   const [message, setMessage] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
   useEvent("message", (e: MessageEvent<string>) => {
-    setMessage(e.data);
+    setMessage(message + e.data);
     console.log(e.data);
   });
 

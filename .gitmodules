@@ -1,0 +1,3 @@
+[submodule "roo-code"]
+	path = roo-code
+	url = https://github.com/RooVetGit/Roo-Code.git

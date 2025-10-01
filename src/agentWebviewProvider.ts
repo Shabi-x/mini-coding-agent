@@ -1,7 +1,17 @@
 import * as vscode from "vscode";
+import { Task } from "./task";
+import { ApiConfiguration } from "./APIHandler";
+
+
 
 export class AgentWebviewProvider implements vscode.WebviewViewProvider {
   private webview?: vscode.Webview | undefined;
+  private currentTask: Task | undefined = undefined;
+  private apiConfiguration: ApiConfiguration = {
+    model: "gpt-4.1",
+    apiKey: "",
+    BaseUrl: "",
+  };
   constructor(private context: vscode.ExtensionContext) {}
   resolveWebviewView(
     webviewView: vscode.WebviewView,
@@ -53,10 +63,13 @@ export class AgentWebviewProvider implements vscode.WebviewViewProvider {
         </body>
       </html>`;
 
-      // 实现后端监听前端发送的消息
-      webviewView.webview.onDidReceiveMessage((e: string) => {
-        vscode.window.showInformationMessage(e);
-      });
+    // 实现后端监听前端发送的消息
+    webviewView.webview.onDidReceiveMessage((message: string) => {
+      // 将webview发送的message展示在vscode右下角弹窗
+      vscode.window.showInformationMessage(message);
+      this.currentTask = new Task(this.apiConfiguration,message);
+      this.currentTask.start();
+    });
   }
 
   postMessage(message: string) {

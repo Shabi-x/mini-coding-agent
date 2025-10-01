@@ -2,24 +2,31 @@ import * as vscode from "vscode";
 import { Task } from "./task";
 import { ApiConfiguration } from "./APIHandler";
 import * as dotenv from "dotenv";
-
-// 加载环境变量
-dotenv.config();
+import * as path from "path";
 
 export class AgentWebviewProvider implements vscode.WebviewViewProvider {
   private webview?: vscode.Webview | undefined;
   private currentTask: Task | undefined = undefined;
-  private apiConfiguration: ApiConfiguration = {
-    model: process.env.MODEL || "qwen-plus",
-    apiKey: process.env.API_KEY || "",
-    BaseUrl: process.env.BASE_URL || "https://dashscope.aliyuncs.com/compatible-mode/v1",
-  };
-  constructor(private context: vscode.ExtensionContext) {}
+  private apiConfiguration: ApiConfiguration;
+  constructor(private context: vscode.ExtensionContext) {
+    // 加载环境变量
+    const envPath = path.join(context.extensionPath, '.env');
+    dotenv.config({ path: envPath });
+    
+    this.apiConfiguration = {
+      model: process.env.MODEL || "qwen-plus",
+      apiKey: process.env.API_KEY || "",
+      BaseUrl: process.env.BASE_URL || "https://dashscope.aliyuncs.com/compatible-mode/v1",
+    };
+  }
   resolveWebviewView(
     webviewView: vscode.WebviewView,
     context: vscode.WebviewViewResolveContext,
     token: vscode.CancellationToken
   ): Thenable<void> | void {
+    // 保存 webview 引用
+    this.webview = webviewView.webview;
+    
     // 解决了 VS Code 扩展中 webview 安全限制问题：
     // 1. webview 默认不能直接访问本地文件系统，需要通过 asWebviewUri 转换为安全 URI
     // 2. 使用 Uri.joinPath 确保跨平台路径兼容性，避免硬编码路径分隔符

@@ -4,6 +4,8 @@ export type ApiConfiguration = {
   BaseUrl: string;
 };
 
+export type historyItem = OpenAI.Chat.Completions.ChatCompletionMessageParam
+
 import { OpenAI } from "openai";
 export default class APIHandler {
   constructor(private apiConfiguration: ApiConfiguration) {

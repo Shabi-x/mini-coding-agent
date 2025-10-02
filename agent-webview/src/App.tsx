@@ -1,6 +1,9 @@
 import { useRef, useState } from "react";
-import "./App.css";
 import { useEvent } from "react-use";
+import ReactMarkdown from "react-markdown";
+
+import "./App.css";
+
 const vscodeApi = acquireVsCodeApi();
 
 function App() {
@@ -31,7 +34,10 @@ function App() {
         <strong>用户:</strong> {message}
       </div>
       <div className="ai-response">
-        <strong>大模型返回:</strong> {response}
+        <strong>大模型返回:</strong>
+        <div className="markdown-content">
+          <ReactMarkdown>{response}</ReactMarkdown>
+        </div>
       </div>
       <div className="card">
         <input type="text" ref={inputRef} placeholder="Type your message here..."></input>

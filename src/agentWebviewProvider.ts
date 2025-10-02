@@ -8,7 +8,7 @@ export class AgentWebviewProvider implements vscode.WebviewViewProvider {
   private webview?: vscode.Webview | undefined;
   private currentTask: Task | undefined = undefined;
   private apiConfiguration: ApiConfiguration;
-  constructor(private context: vscode.ExtensionContext) {
+  constructor(readonly context: vscode.ExtensionContext) {
     // 加载环境变量
     const envPath = path.join(context.extensionPath, '.env');
     dotenv.config({ path: envPath });

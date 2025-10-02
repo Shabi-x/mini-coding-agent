@@ -75,7 +75,7 @@ mini-coding-agent/
    - 实现 markdown 渲染
    - 添加请求重试和错误恢复机制
 
-2. **抓取Agent内置提示词**
+2. **抓取Agent System Prompts**
    - System Prompts
    - 将tools编写为func_call
    - attempt_completion

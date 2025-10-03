@@ -1,27 +1,30 @@
+import { XMLParser } from "fast-xml-parser";
+import { readFile } from "node:fs/promises";
+import * as path from "node:path";
+import OpenAI from "openai";
+
 import { AgentWebviewProvider } from "./agentWebviewProvider";
 import APIHandler, { ApiConfiguration, historyItem } from "./APIHandler";
-import { OpenAI } from "openai";
 
-import { readFile } from "node:fs/promises";
-import * as path from "path";
-
-import { XMLParser } from "fast-xml-parser";
-
-const toolName = ["attempt_completion", "read_file"] as const;
-const paramsName = ["result", "filename"] as const;
-export type ToolName = (typeof toolName)[number];
-export type ParamsName = (typeof paramsName)[number];
-type ToolUse = {
-  type: "tool_use";
-  name: ToolName;
-  params: Partial<Record<ParamsName, string>>;
-};
+type AssistantMessageContent = ToolUse | TextContent;
 type TextContent = {
   type: "text";
   content: string;
 };
-type AssistantMessageContent = ToolUse | TextContent;
-// 实现与大模型交互相关的逻辑
+
+const toolName = ["attempt_completion"] as const;
+
+type ToolName = (typeof toolName)[number];
+
+const paramName = ["result"] as const;
+type ParamName = (typeof paramName)[number];
+
+type ToolUse = {
+  type: "tool_use";
+  name: ToolName;
+  params: Partial<Record<ParamName, string>>;
+};
+
 export class Task {
   private systemPrompt: string = "";
   private history: historyItem[] = [];
@@ -29,9 +32,7 @@ export class Task {
     private provider: AgentWebviewProvider,
     private apiConfiguration: ApiConfiguration,
     private message: string
-  ) {
-    const { model, apiKey, BaseUrl } = this.apiConfiguration;
-  }
+  ) {}
   async start() {
     this.history.push({ role: "user", content: this.message });
     await this.recursivelyMakeRequest(this.history);
@@ -39,47 +40,35 @@ export class Task {
 
   async recursivelyMakeRequest(history: historyItem[]) {
     const apiHandler = new APIHandler(this.apiConfiguration);
-    const systemPrompt = await this.GetSystemPrompt();
+
+    const systemPrompt = await this.getSystemPrompt();
+
     const stream = apiHandler.createMessage(systemPrompt, history);
-    let assistantMessage: string = "";
+    let assistantMessage = "";
     for await (const chunk of stream) {
       assistantMessage += chunk;
-      const messageStr =
-        typeof chunk === "string" ? chunk : JSON.stringify(chunk);
-      this.provider.postMessage(messageStr);
+      this.provider.postMessage(chunk);
     }
+    console.log(assistantMessage);
     this.history.push({ role: "assistant", content: assistantMessage });
-    const assistantContent = this.ParseAssistantMessage(assistantMessage);
-    const tool_used = this.PresentAssistantMessage(assistantContent);
-
-    if (!tool_used) {
-      this.history.push({ role: "user", content: assistantMessage });
+    const assistantContent = this.parseAssistantMessage(assistantMessage);
+    const toolUsed = this.presentAssistantMessage(assistantContent);
+    
+    // 检查是否使用了 attempt_completion 工具
+    const hasAttemptCompletion = assistantContent.some(
+      item => item.type === "tool_use" && item.name === "attempt_completion"
+    );
+    
+    if (!toolUsed && !hasAttemptCompletion) {
+      this.history.push({ role: "user", content: this.noToolUsed() });
       await this.recursivelyMakeRequest(this.history);
     }
+    // 如果使用了 attempt_completion 工具，任务完成，不再继续递归
   }
 
-  async GetSystemPrompt() {
-    if (this.systemPrompt) {
-      return this.systemPrompt;
-    }
-    this.systemPrompt = await readFile(
-      path.join(
-        this.provider.context.extensionPath,
-        "assets",
-        "system_prompt.md"
-      ),
-      "utf-8"
-    );
-    return this.systemPrompt;
-  }
-
-  // 解析大模型返回的消息，提取出代码块
-  ParseAssistantMessage(assistantMessage: string): AssistantMessageContent[] {
+  parseAssistantMessage(assistantMessage: string): AssistantMessageContent[] {
     try {
-      const parser = new XMLParser({
-        ignoreAttributes: false,
-        attributeNamePrefix: "@_",
-      });
+      const parser = new XMLParser();
       const content = parser.parse(assistantMessage);
       if ("attempt_completion" in content) {
         return [
@@ -91,23 +80,40 @@ export class Task {
         ];
       }
       return [];
-    } catch (error) {
+    } catch {
       return [{ type: "text", content: assistantMessage }];
     }
   }
 
-  // 展示大模型返回的代码块
-  PresentAssistantMessage(assistantContent: AssistantMessageContent[]): boolean {
+  presentAssistantMessage(
+    assistantContent: AssistantMessageContent[]
+  ): boolean {
     for (const item of assistantContent) {
       if (item.type === "tool_use") {
-        return true;
+          return true;
       }
     }
     return false;
   }
 
+  async getSystemPrompt() {
+    if (this.systemPrompt) {
+      return this.systemPrompt;
+    }
+    this.systemPrompt = await readFile(
+      path.join(
+        this.provider.context.extensionPath,
+        "assets",
+        "system_prompt.md"
+      ),
+      "utf8"
+    );
+    return this.systemPrompt;
+  }
+
   noToolUsed() {
     return `[ERROR] You did not use a tool in your previous response! Please retry with a tool use.
+
 # Reminder: Instructions for Tool Use
 
 Tool uses are formatted using XML-style tags. The tool name itself becomes the XML tag name. Each parameter is enclosed within its own set of tags. Here's the structure:
